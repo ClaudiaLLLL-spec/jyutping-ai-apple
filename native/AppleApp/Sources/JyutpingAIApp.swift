@@ -106,7 +106,7 @@ final class BridgeCoordinator: NSObject, WKScriptMessageHandler {
         #else
         let panel = NSSavePanel()
         panel.nameFieldStringValue = filename
-        panel.allowedContentTypes = [.plainText]
+        panel.allowedContentTypes = [UTType(filenameExtension: "lrc") ?? .plainText]
         if panel.runModal() == .OK, let url = panel.url {
             try? content.write(to: url, atomically: true, encoding: .utf8)
         }
