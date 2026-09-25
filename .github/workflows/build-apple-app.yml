@@ -1,0 +1,55 @@
+name: Build Apple Apps
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate icons and Xcode project
+        run: |
+          bash native/scripts/generate-icons.sh
+          cd native
+          xcodegen generate
+      - name: Build universal macOS app
+        run: |
+          xcodebuild -project native/JyutpingAI.xcodeproj -scheme JyutpingAI-macOS \
+            -configuration Release -derivedDataPath native/build/macos \
+            ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO build
+          codesign --force --deep --sign - "native/build/macos/Build/Products/Release/粤音智标.app"
+          ditto -c -k --sequesterRsrc --keepParent \
+            "native/build/macos/Build/Products/Release/粤音智标.app" \
+            "粤音智标-macOS-universal.zip"
+      - name: Build unsigned iOS IPA
+        run: |
+          xcodebuild -project native/JyutpingAI.xcodeproj -scheme JyutpingAI-iOS \
+            -configuration Release -sdk iphoneos -destination "generic/platform=iOS" \
+            -derivedDataPath native/build/ios CODE_SIGNING_ALLOWED=NO build
+          mkdir -p native/build/Payload
+          cp -R "native/build/ios/Build/Products/Release-iphoneos/粤音智标.app" native/build/Payload/
+          cd native/build
+          zip -qry "../../粤音智标-iOS-unsigned.ipa" Payload
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: JyutpingAI-Apple
+          path: |
+            粤音智标-macOS-universal.zip
+            粤音智标-iOS-unsigned.ipa
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          if [ "$VERSION" = "main" ]; then VERSION="build-${GITHUB_RUN_NUMBER}"; fi
+          gh release create "$VERSION" --target "$GITHUB_SHA" \
+            "粤音智标-macOS-universal.zip" "粤音智标-iOS-unsigned.ipa" \
+            --title "粤音智标 $VERSION" \
+            --notes "macOS：解压后拖入‘应用程序’，首次打开如被拦截请右键选择‘打开’。iOS：未签名 IPA，需用 AltStore、Sideloadly 或 Apple 开发者证书签名后安装。"

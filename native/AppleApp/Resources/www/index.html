@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#09100c" />
+    <title>粤音智标</title>
+    <script type="module" crossorigin src="./assets/index-CAC2fj0W.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DUn3jfp3.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand"><div class="brand-mark">粤</div><div><strong>粤音智标</strong><small>粤拼 AI 自动标注器</small></div></div>
+        <button id="newProject" class="ghost-button">＋ 新建</button>
+      </header>
+
+      <section class="hero-strip">
+        <div><span class="eyebrow"><i></i> JYUTPING AI STUDIO</span><h1>让每一句粤语歌词，<em>都有完整读音。</em></h1><p>繁简体、粤语口语字及上下文多音字，全部在本机处理。</p></div>
+        <div class="hero-stats"><div><b>离线</b><span>无需登录</span></div><div><b>繁＋简</b><span>完整词库</span></div></div>
+      </section>
+
+      <section class="workspace">
+        <aside class="input-panel">
+          <div class="panel-heading"><div><span class="step">01</span><h2>导入歌词</h2></div><button id="loadDemo" class="text-button">载入示例</button></div>
+          <div class="source-tabs"><button class="active">粘贴歌词</button><button id="pickFile">导入 LRC</button><input id="fileInput" type="file" accept=".lrc,.txt,text/plain" hidden /></div>
+          <div class="textarea-wrap"><textarea id="lyricsInput" aria-label="歌词内容" placeholder="粘贴 QQ 音乐 LRC 歌词…"></textarea><div class="count"><span id="lineCount">0 行</span><span id="charCount">0 字符</span></div></div>
+          <div class="settings">
+            <label>输出格式</label>
+            <div id="formatPicker" class="segmented"><button class="active" data-format="aligned">逐字对齐</button><button data-format="sentence">整句粤拼</button><button data-format="dual">双行 LRC</button></div>
+            <label class="check-row"><span><b>保留时间轴</b><small>导出时保留原歌词时间标签</small></span><input id="keepTimeline" type="checkbox" checked /></label>
+          </div>
+          <button id="annotate" class="run-button"><span>✦</span> 智能生成粤拼 <kbd>⌘ ↵</kbd></button>
+          <p class="privacy">● 完全离线运行，歌词不会上传</p>
+        </aside>
+
+        <section class="result-panel">
+          <div class="panel-heading result-heading"><div><span class="step">02</span><h2>校对与导出</h2><span id="status" class="status-dot">已就绪</span></div><div class="result-actions"><button id="copyAll">复制全部</button><button id="exportLrc" class="export">导出 LRC ↓</button></div></div>
+          <div class="summary-bar"><span><b id="resultLines">0</b> 行歌词</span><span><b id="resultChars">0</b> 个字符</span><span><b id="coverage">0%</b> 标注覆盖率</span><span class="legend"><i class="high"></i> 已标注 <i class="medium"></i> 待校对</span></div>
+          <div id="lyricsEditor" class="lyrics-editor"></div>
+          <div id="correctionBar" class="correction-bar" hidden><div><span>正在校对</span><b id="editingLabel"></b></div><input id="jyutpingEdit" aria-label="编辑粤拼" /><span class="hint">空格分隔每个字音</span></div>
+        </section>
+      </section>
+      <footer><span>粤音智标 · 本地粤拼引擎</span><span>声调 1–6 · 支持繁简体 · UTF-8</span></footer>
+    </main>
+  </body>
+</html>
