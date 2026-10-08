@@ -8,6 +8,9 @@ trap 'rm -rf "$TMP"' EXIT
 qlmanage -t -s 1024 -o "$TMP" "$SVG" >/dev/null 2>&1
 SOURCE="$TMP/AppIcon.svg.png"
 test -f "$SOURCE"
+swift "$ROOT/scripts/prepare-icon.swift" "$SOURCE" "$TMP/ios.png" ios
+swift "$ROOT/scripts/prepare-icon.swift" "$SOURCE" "$TMP/mac.png" mac
+SOURCE="$TMP/ios.png"
 make_icon() { sips -z "$2" "$2" "$SOURCE" --out "$OUT/$1" >/dev/null; }
 make_icon icon-20@2x.png 40
 make_icon icon-20@3x.png 60
@@ -18,6 +21,7 @@ make_icon icon-40@3x.png 120
 make_icon icon-60@2x.png 120
 make_icon icon-60@3x.png 180
 make_icon icon-1024.png 1024
+SOURCE="$TMP/mac.png"
 make_icon icon-16.png 16
 make_icon icon-16@2x.png 32
 make_icon icon-32.png 32
